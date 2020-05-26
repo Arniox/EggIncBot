@@ -1,0 +1,26 @@
+{
+  "name": "eggincbot",
+  "version": "1.0.0",
+  "description": "Egg Inc Bot",
+  "main": "bot.js",
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "enmap": "^5.2.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arniox/EggIncBot.git"
+  },
+  "author": "Nikkolas Diehl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arniox/EggIncBot/issues"
+  },
+  "homepage": "https://github.com/Arniox/EggIncBot#readme"
+}
