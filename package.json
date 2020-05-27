@@ -7,7 +7,8 @@
     "discord.io": "^2.5.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
-    "enmap": "^5.2.4"
+    "enmap": "^5.2.4",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {},
   "scripts": {
