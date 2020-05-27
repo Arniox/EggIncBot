@@ -1,7 +1,7 @@
 # EggIncBot
  Discord Egg Inc bot
 
- ![Discord.js logo]("https://i.imgur.com/QwbFJ9g.png")
+ ![Discord.js logo](https://i.imgur.com/QwbFJ9g.png)
 
  https://discord.js.org/#/
 
