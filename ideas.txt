@@ -1,0 +1,11 @@
+- Auto stats calculation for ranking (later add image processing for completely automatic stats calculation).
+- Add moderation levels. 
+None (anyone can upate their stats), 
+Light (auto moderation by the bot. Checks your stats histroy and sees if there's an unusualy high jump in stats)
+Medium (an image is processed and the stats update is sent to a moderation chat where moderators approve the stats update)
+Heavy (Only allow manual moderation and stats updates)
+
+- Automatic prefarm stats calculations. Just start a tally and anyone that posts will be tallied up. People that post multiple times will automatically update their previous stats updates.
+
+- Automatic team creation. Grabs everyones ranks, calculates out a rough estimate of how much you can prefarm and output in the time alloted for a contract and then automatically builds perfect teams
+
