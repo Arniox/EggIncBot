@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `Stats`
 (
- `Stats_Id`       int NOT NULL ,
+ `Stats_Id`       int NOT NULL AUTO_INCREMENT ,
  `OoM`            int NULL ,
  `Prestiges`      int NULL ,
  `Drones`         int NULL ,

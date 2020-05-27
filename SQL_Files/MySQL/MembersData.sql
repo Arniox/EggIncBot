@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `MembersData`
 (
- `Data_Id`     int NOT NULL ,
+ `Data_Id`     int NOT NULL AUTO_INCREMENT ,
  `Level_Id`    int NOT NULL ,
  `Stats_Id`    int NOT NULL ,
  `Prestige_Id` int NOT NULL ,

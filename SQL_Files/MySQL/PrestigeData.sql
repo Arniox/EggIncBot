@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `PrestigeData`
 (
- `Prestige_Id`    int NOT NULL ,
+ `Prestige_Id`    int NOT NULL AUTO_INCREMENT ,
  `Legendary_Eggs` int NULL ,
  `Soul_Eggs_Id`   int NOT NULL ,
  `Bonus_Id`       int NOT NULL ,

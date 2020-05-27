@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `LifeTimeEarnings`
 (
- `Earnings_Id` int NOT NULL ,
+ `Earnings_Id` int NOT NULL AUTO_INCREMENT ,
  `Scale_Id`    int NOT NULL ,
  `Number`      int NULL ,
 

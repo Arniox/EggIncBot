@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `Levels`
 (
- `Levels_Id`      int NOT NULL ,
+ `Levels_Id`      int NOT NULL AUTO_INCREMENT ,
  `LevelNumber`    int NOT NULL ,
  `Role_Id`        int NOT NULL ,
  `Restriction_Id` int NOT NULL ,

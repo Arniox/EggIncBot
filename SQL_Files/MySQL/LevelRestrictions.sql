@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `LevelRestriction`
 (
- `Restriction_Id` int NOT NULL ,
+ `Restriction_Id` int NOT NULL AUTO_INCREMENT ,
  `Scale_Id`       int NOT NULL ,
  `Number`         int NOT NULL ,
 

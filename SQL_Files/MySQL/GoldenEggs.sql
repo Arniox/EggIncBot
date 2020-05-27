@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `GoldenEggs`
 (
- `Gold_Id`  int NOT NULL ,
+ `Gold_Id`  int NOT NULL AUTO_INCREMENT ,
  `Scale_Id` int NOT NULL ,
  `Number`   int NULL ,
 
