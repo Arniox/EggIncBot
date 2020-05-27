@@ -9,11 +9,11 @@ module.exports = (bot) => {
         //Check if guild exists in database
         const sql_cmd = `SELECT * FROM configure WHERE Guild_Id = ${key}`;
         bot.con.query(sql_cmd, (error, results, fields) => {
-            if (error) return console.error(err); //Return error console log and continue
+            if (error) return console.error(error); //Return error console log and continue
             else if (!results || !results.length) {
                 //Create new
                 const update_cmd = `INSERT INTO configure (Guild_Id, Guild_Name, prefix) VALUES (${key}, "${value.name}", "e-")`;
-                bot.con.query(update_cmd);
+                bot.con.query(update_cmd).catch(error => console.error(error));
             }
         });
     });
