@@ -1,8 +1,22 @@
 //Import classes
 const Discord = require('discord.js');
 
-exports.run = (bot, message, args) => {
-    message.channel.send(new Discord.MessageEmbed().setDescription(`Right back at you! Yes, I am alive. Current uptime is: ${UpTime()}. Current Prefix is ${bot.config.prefix}`));
+exports.run = (bot, guild, message, args) => {
+    var pingMessage = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setAuthor(bot.user.username, bot.user.avatarURL())
+        .setDescription(`Right back at you! Yes, I am alive.`)
+        .addFields(
+            { name: 'Current Uptime: ', value: `${UpTime()}`, inline: true },
+            { name: 'Server Prefix: ', value: `${guild.prefix}` },
+            { name: 'Total Guilds: ', value: `${bot.guilds.cache.size}`, inline: true },
+            { name: 'Total Channels: ', value: `${bot.channels.cache.size}`, inline: true },
+            { name: 'Total Users: ', value: `${bot.users.cache.size}`, inline: true }
+        )
+        .setTimestamp()
+        .setFooter('Thanks, and have a good day');
+
+    message.channel.send(pingMessage);
 }
 
 //Functions
