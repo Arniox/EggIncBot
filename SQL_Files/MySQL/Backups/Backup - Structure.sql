@@ -18,6 +18,41 @@ USE `eggincbot`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `channels`
+--
+
+DROP TABLE IF EXISTS `channels`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `channels` (
+  `Channel_Id` int NOT NULL AUTO_INCREMENT,
+  `Guild_Id` varchar(20) NOT NULL,
+  `UUID` varchar(20) NOT NULL,
+  `Channel_Name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`Channel_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `configure`
+--
+
+DROP TABLE IF EXISTS `configure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `configure` (
+  `Configure_Id` int NOT NULL AUTO_INCREMENT,
+  `Guild_Id` varchar(20) NOT NULL,
+  `Prefix` varchar(10) NOT NULL,
+  `Guild_Name` varchar(1000) DEFAULT NULL,
+  `Mod_Id` int NOT NULL,
+  PRIMARY KEY (`Configure_Id`,`Guild_Id`),
+  KEY `fkIdx_142` (`Mod_Id`),
+  CONSTRAINT `FK_142` FOREIGN KEY (`Mod_Id`) REFERENCES `modcontrol` (`Mod_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `earningsbonus`
 --
 
@@ -114,8 +149,8 @@ DROP TABLE IF EXISTS `members`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `members` (
   `Members_Id` int NOT NULL AUTO_INCREMENT,
-  `Guild_Id` bigint NOT NULL,
-  `UUID` bigint NOT NULL,
+  `bigint` varchar(20) NOT NULL,
+  `UUID` varchar(20) NOT NULL,
   `Name` varchar(32) NOT NULL,
   `Nick_Name` varchar(32) DEFAULT NULL,
   `Member_Data` int NOT NULL,
@@ -144,6 +179,48 @@ CREATE TABLE `membersdata` (
   CONSTRAINT `FK_79` FOREIGN KEY (`Level_Id`) REFERENCES `levels` (`Levels_Id`),
   CONSTRAINT `FK_82` FOREIGN KEY (`Stats_Id`) REFERENCES `stats` (`Stats_Id`),
   CONSTRAINT `FK_85` FOREIGN KEY (`Prestige_Id`) REFERENCES `prestigedata` (`Prestige_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `modcontrol`
+--
+
+DROP TABLE IF EXISTS `modcontrol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `modcontrol` (
+  `Mod_Id` int NOT NULL AUTO_INCREMENT,
+  `ModLevel_Id` int NOT NULL,
+  `Stats_Update_Max_Diff` bigint DEFAULT NULL,
+  `Stats_Trusted_Role` int DEFAULT NULL,
+  `Mod_Approval_Chat` int DEFAULT NULL,
+  `Moderator_Role` int DEFAULT NULL,
+  PRIMARY KEY (`Mod_Id`),
+  KEY `fkIdx_126` (`Stats_Trusted_Role`),
+  KEY `fkIdx_136` (`Mod_Approval_Chat`),
+  KEY `fkIdx_139` (`ModLevel_Id`),
+  KEY `fkIdx_145` (`Moderator_Role`),
+  CONSTRAINT `FK_126` FOREIGN KEY (`Stats_Trusted_Role`) REFERENCES `roles` (`Role_Id`),
+  CONSTRAINT `FK_136` FOREIGN KEY (`Mod_Approval_Chat`) REFERENCES `channels` (`Channel_Id`),
+  CONSTRAINT `FK_139` FOREIGN KEY (`ModLevel_Id`) REFERENCES `moderationlevel` (`ModLevel_Id`),
+  CONSTRAINT `FK_145` FOREIGN KEY (`Moderator_Role`) REFERENCES `roles` (`Role_Id`),
+  CONSTRAINT `CK_Moderation_Level` CHECK ((((`ModLevel_Id` <> 0) and (((`ModLevel_Id` = 1) and (`Stats_Update_Max_Diff` is not null) and (`Mod_Approval_Chat` is not null) and (`Moderator_Role` is not null)) or ((`ModLevel_Id` = 2) and (`Stats_Trusted_Role` is not null) and (`Mod_Approval_Chat` is not null) and (`Moderator_Role` is not null)) or ((`ModLevel_Id` = 3) and (`Mod_Approval_Chat` is not null) and (`Moderator_Role` is not null)) or ((`ModLevel_Id` = 4) and (`Mod_Approval_Chat` is not null) and (`Moderator_Role` is not null)))) or (`ModLevel_Id` = 0)))
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `moderationlevel`
+--
+
+DROP TABLE IF EXISTS `moderationlevel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `moderationlevel` (
+  `ModLevel_Id` int NOT NULL,
+  `Name` varchar(32) NOT NULL,
+  `Description` varchar(1000) DEFAULT NULL,
+  PRIMARY KEY (`ModLevel_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -197,8 +274,8 @@ DROP TABLE IF EXISTS `roles`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles` (
   `Role_Id` int NOT NULL AUTO_INCREMENT,
-  `Guild_Id` bigint NOT NULL,
-  `UUID` bigint NOT NULL,
+  `Guild_Id` varchar(20) NOT NULL,
+  `UUID` varchar(20) NOT NULL,
   `Role_Color` varchar(6) DEFAULT NULL,
   PRIMARY KEY (`Role_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -261,4 +338,4 @@ CREATE TABLE `stats` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-27 13:49:26
+-- Dump completed on 2020-05-28 22:09:06
