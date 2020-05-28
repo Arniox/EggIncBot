@@ -8,12 +8,17 @@ exports.run = (bot, guild, message, args) => {
 
         const current_settings_cmd = `
                 SELECT 
+                ModLevel.ModLevel_Id AS 'ModLevel_ID',
                 ModLevel.Name AS 'ModLevelName', 
+                ModControl.Mod_Id AS 'ModControl_Id',
                 ModControl.Stats_Update_Max_Diff AS 'StatsMaxDiff',
+                TrustRole.Role_Id AS 'TrustRole_RoleId',
                 TrustRole.UUID AS 'TrustRoleId',
                 TrustRole.Guild_Id AS 'TrustRoleGuildId',
+                ModChat.Channel_Id AS 'ModChat_ChannelId',
                 ModChat.UUID AS 'ModChatId',
                 ModChat.Guild_Id AS 'ModChatGuildId',
+                ModRole.Role_Id AS 'ModRole_RoleId',
                 ModRole.UUID AS 'ModRoleId',
                 ModRole.Guild_Id AS 'ModRoleGuildId'
                     FROM configure AS Config
@@ -34,8 +39,11 @@ exports.run = (bot, guild, message, args) => {
 
             if (message.member.hasPermission('MANAGE_GUILD') || message.member.roles.cache.some(role => results[0].ModRoleId)) {
                 if ((results[0].TrustRoleGuildId == message.guild.id || results[0].TrustRoleId == null) &&
-                    (results[0].ModChatGuildId == message.guild.id || results[0].ModChat == null) &&
-                    (results[0].ModRoleGuildId == message.guild.id || results[0].ModRole == null)) {
+                    (results[0].ModChatGuildId == message.guild.id || results[0].ModChatId == null) &&
+                    (results[0].ModRoleGuildId == message.guild.id || results[0].ModRoleId == null)) {
+
+                    console.log(results);
+
                     //Check the option you want
                     switch (command) {
                         case 'level':
@@ -47,8 +55,82 @@ exports.run = (bot, guild, message, args) => {
                         case 'modchat':
                             break;
                         case 'modrole':
+                            if (args.length != 0) {
+                                var dictation = args.shift();
 
+                                switch (dictation) {
+                                    case 'set':
+                                        var roles = message.mentions.roles;
+                                        if (roles.size != 0) {
+                                            if (roles.size == 1) {
+                                                //Save roles id
+                                                roles.map((value, key) => {
+                                                    //Check that the role isn't already the moderator role
+                                                    if (results[0].ModRoleId != key) {
+                                                        //If modrole id is null, then create a new modrole
+                                                        var update_modrole_cmd = '';
+                                                        if (results[0].ModRole_RoleId == null) {
+                                                            update_modrole_cmd = `INSERT INTO roles (Guild_Id, UUID, Role_Color) VALUES ("${message.guild.id}", "${key}", "${value.color.toString(16)}")`;
+                                                        } else {
+                                                            //Update database
+                                                            update_modrole_cmd = `UPDATE roles SET uuid = "${key}" WHERE Role_Id = ${results[0].ModRole_RoleId}`;
+                                                        }
+                                                        //Run command
+                                                        bot.con.query(update_modrole_cmd, (error, roleresults, fields) => {
+                                                            if (error) return console.error(error); //Throw error and continue
 
+                                                            //If ModRole_RoleId is null, then insert into ModControl
+                                                            if (results[0].ModRole_RoleId == null) {
+                                                                const set_modcontrol_cmd = `UPDATE modcontrol SET moderator_role = ${roleresults.insertId} WHERE Mod_Id = ${results[0].ModControl_Id}`;
+                                                                bot.con.query(set_modcontrol_cmd).catch(error => console.error(error)); //Update the mod controller with new id
+                                                            }
+                                                            //Message
+                                                            message.channel.send(new Discord.MessageEmbed().setDescription(`Set ${message.guild.roles.cache.get(key).toString()}` +
+                                                                ` as the egg inc moderator.`).setColor('#09b50c'));
+                                                        });
+
+                                                    } else {
+                                                        message.channel.send(new Discord.MessageEmbed().setDescription(`${message.guild.roles.cache.get(results[0].ModRoleId).toString()}` +
+                                                            ` is already set as the moderator role for ${message.guild.toString()}`).setColor('#b50909'));
+                                                    }
+                                                });
+                                            } else {
+                                                message.channel.send(new Discord.MessageEmbed().setDescription('There can only be one specified moderator role. ' +
+                                                    'Remember, the server manager permission automatically gives you moderation abilities.').setColor('#b50909'));
+                                            }
+                                        } else {
+                                            message.channel.send(new Discord.MessageEmbed().setDescription('You didn\'t supply any roles to set.').setColor('#b50909'));
+                                        }
+                                        break;
+                                    case 'clear':
+                                        //If modrole id is null, then don't do anything
+                                        if (results[0].ModRole_RoleId != null) {
+                                            //Set modcontrol moderator_role id tp null
+                                            const remove_id_cmd = `UPDATE modcontrol SET moderator_role = null WHERE Mod_Id = ${results[0].ModControl_Id}`;
+                                            bot.con.query(remove_id_cmd).catch(error => console.error(error));
+
+                                            //Delete moderator role
+                                            const delete_modrole_cmd = `DELETE FROM roles WHERE Role_Id = ${results[0].ModRole_RoleId}`;
+                                            bot.con.query(delete_modrole_cmd).catch(error => console.error(error));
+
+                                            //Message
+                                            message.channel.send(new Discord.MessageEmbed().setDescription(`Removed ${message.guild.roles.cache.get(results[0].ModRoleId).toString()}` +
+                                                ` from moderation.`).setColor('#09b50c'));
+                                        } else {
+                                            message.channel.send(new Discord.MessageEmbed().setDescription('There was no moderation role to clear.').setColor('#b50909'));
+                                        }
+                                        break;
+                                    case 'current':
+                                        message.channel.send(new Discord.MessageEmbed().setDescription(`The current listed moderator role is ` +
+                                            `${(results[0].ModRoleId != null ? `${message.guild.roles.cache.get(results[0].ModRoleId).toString()}` : '***No Moderation Role Set***')}`).setColor('#09b50c'));
+                                        break;
+                                    default:
+                                        HelpMessage(bot, guild, message, args);
+                                        break;
+                                }
+                            } else {
+                                message.channel.send(new Discord.MessageEmbed().setDescription('Did you want to set a new modrole, or view the current modrole?').setColor('#b50909'));
+                            }
                             break;
                         case 'current':
                             //Return with message
@@ -60,22 +142,22 @@ exports.run = (bot, guild, message, args) => {
                                     { name: 'Moderation Level: ', value: `***${results[0].ModLevelName}***`, inline: true },
                                     {
                                         name: 'Trust Role: ',
-                                        value: `***${(results[0].TrustRoleId != null ? `${message.guild.roles.cache.find(i => i.id == results[0].TrustRoleId).toString()}` : 'No Trusted Role Set')}***`,
+                                        value: `${(results[0].TrustRoleId != null ? `${message.guild.roles.cache.get(results[0].TrustRoleId).toString()}` : '***No Trusted Role Set***')}`,
                                         inline: true
                                     },
                                     {
                                         name: 'Stats Max Difference: ',
-                                        value: `***${(results[0].StatsMaxDiff != null ? `${results[0].StatsMaxDiff}` : 'No Stat Max Difference Value Set')}***`,
+                                        value: `${(results[0].StatsMaxDiff != null ? `${results[0].StatsMaxDiff}` : '***No Stat Max Difference Value Set***')}`,
                                         inline: true
                                     },
                                     {
                                         name: 'Moderation Role: ',
-                                        value: `***${(results[0].ModRoleGuildId != null ? `${message.guild.roles.cache.find(i => i.id == results[0].ModRoleGuildId).toString()}` : 'No Moderation Role Set')}***`,
+                                        value: `${(results[0].ModRoleId != null ? `${message.guild.roles.cache.get(results[0].ModRoleId).toString()}` : '***No Moderation Role Set***')}`,
                                         inline: true
                                     },
                                     {
                                         name: 'Moderation Approval Chat: ',
-                                        value: `***${(results[0].ModChatGuildId != null ? `${message.guild.channels.cache.find(i => i.id == results[0].ModChatGuildId).toString()}` : 'No Moderation Approval Chat Set')}***`,
+                                        value: `${(results[0].ModChatId != null ? `${message.guild.channels.cache.get(results[0].ModChatId).toString()}` : '***No Moderation Approval Chat Set***')}`,
                                         inline: true
                                     }
                                 )
@@ -93,7 +175,7 @@ exports.run = (bot, guild, message, args) => {
                     console.error('ERROR - For some reason the database selection returned values that did not share the same Guild.');
                 }
             } else {
-                message.channel.send(new Discord.MessageEmbed().setDescription('Sorry, you need management permissions, or need to be a moderator to run this command.'));
+                message.channel.send(new Discord.MessageEmbed().setDescription('Sorry, you need management permissions, or need to be a moderator to run this command.').setColor('#b50909'));
             }
         });
     } else {
@@ -135,12 +217,12 @@ function HelpMessage(bot, guild, message, args) {
             },
             {
                 name: 'Command Format: ',
-                value: `${guild.Prefix}mod [variable/function] [current/set] [value]\n` +
-                    `${guild.Prefix}mod level [current/set] {optional set: [none/light/medium/heavy/restrictive]}\n` +
-                    `${guild.Prefix}mod maxdiff [current/set] {optional set: [number representing percentage, eg: 75]}\n` +
-                    `${guild.Prefix}mod trustrole [current/set] {optional set: [@role]}\n` +
-                    `${guild.Prefix}mod modchat [current/set] {optional set: [#chat]}\n` +
-                    `${guild.Prefix}mod modrole [current/set] {optional set: [@role]}\n` +
+                value: `${guild.Prefix}mod [variable/function] [current/set/clear] [value]\n` +
+                    `${guild.Prefix}mod level [current/set/clear] {optional set: [none/light/medium/heavy/restrictive]}\n` +
+                    `${guild.Prefix}mod maxdiff [current/setclear] {optional set: [number representing percentage, eg: 75]}\n` +
+                    `${guild.Prefix}mod trustrole [current/setclear] {optional set: [@role]}\n` +
+                    `${guild.Prefix}mod modchat [current/setclear] {optional set: [#chat]}\n` +
+                    `${guild.Prefix}mod modrole [current/setclear] {optional set: [@role]}\n` +
                     `${guild.Prefix}mod current - (shows all current settings)`
             }
         )
