@@ -18,6 +18,25 @@ USE `eggincbot`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Dumping data for table `channels`
+--
+
+LOCK TABLES `channels` WRITE;
+/*!40000 ALTER TABLE `channels` DISABLE KEYS */;
+/*!40000 ALTER TABLE `channels` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `configure`
+--
+
+LOCK TABLES `configure` WRITE;
+/*!40000 ALTER TABLE `configure` DISABLE KEYS */;
+INSERT INTO `configure` VALUES (1,'442278074134822923','e-','The Kennel',1),(2,'579242534086377472','e-','Friends',2),(3,'668106312080556034','e-','beans',3),(4,'713733412254384149','e-','Aqa Street, New Mexico',4),(5,'671181556202733600','e-','Vulcan Esports',5);
+/*!40000 ALTER TABLE `configure` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `earningsbonus`
 --
 
@@ -78,6 +97,26 @@ UNLOCK TABLES;
 LOCK TABLES `membersdata` WRITE;
 /*!40000 ALTER TABLE `membersdata` DISABLE KEYS */;
 /*!40000 ALTER TABLE `membersdata` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `modcontrol`
+--
+
+LOCK TABLES `modcontrol` WRITE;
+/*!40000 ALTER TABLE `modcontrol` DISABLE KEYS */;
+INSERT INTO `modcontrol` VALUES (1,0,NULL,NULL,NULL,NULL),(2,0,NULL,NULL,NULL,NULL),(3,0,NULL,NULL,NULL,NULL),(4,0,NULL,NULL,NULL,NULL),(5,0,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `modcontrol` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `moderationlevel`
+--
+
+LOCK TABLES `moderationlevel` WRITE;
+/*!40000 ALTER TABLE `moderationlevel` DISABLE KEYS */;
+INSERT INTO `moderationlevel` VALUES (0,'None','Anyone can update their stats in a specified channel. Default mode. Use this if you fully trust your community.'),(1,'Light','Auto moderation by the bot. The bot will check your stats history and see if there\'s an unusually high jump in stats. This moderation level requires you specifiy a max difference value. Use this if you somewhat trust your community.'),(2,'Medium','Members with a specified trusted role can update their stats freely, but everyone else needs manual moderation approval in a specified moderation approval chat. Requires a trusted role and approval chat to be set. Use this if you have a large community with only a select few trusted members.'),(3,'Heavy','All members need moderation approval for their stat updates. Stat updates are sent to a specified moderation approval chat. Requires an approval chat to be set. Use this if you have a large community and no trusted members.'),(4,'Restrictive','Only allow manual moderation approved stat updates. The bot will not process any data, and will directly send the stat screenshot to a specified moderation approval chat. Moderators then have to manually update the member\'s stats. Requires a moderator role and moderation approval chat to be set.');
+/*!40000 ALTER TABLE `moderationlevel` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -143,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-27 13:49:39
+-- Dump completed on 2020-05-28 22:09:15
