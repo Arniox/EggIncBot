@@ -14,10 +14,13 @@ exports.run = (bot, guild, message, args) => {
 
                     //Check if the query exists
                     if (query) {
-                        var previousPrefix = guild.prefix;
+                        var previousPrefix = guild.Prefix;
 
                         //Change prefix
-                        const update_cmd = `UPDATE configure SET prefix = "${query}" WHERE Guild_Id = ${message.guild.id}`;
+                        const update_cmd = `
+                        UPDATE configure 
+                            SET prefix = "${query}" 
+                            WHERE Guild_Id = ${message.guild.id}`;
                         bot.con.query(update_cmd).catch(error => console.error(error));
                         //Change user activity
                         bot.user.setActivity(`the ${query} prefix`, { type: 'WATCHING' });
@@ -31,7 +34,7 @@ exports.run = (bot, guild, message, args) => {
                 }
                 break;
             case 'current':
-                message.channel.send(new Discord.MessageEmbed().setDescription(`Current Server Prefix is: ${guild.prefix}`).setColor('#0099ff'));
+                message.channel.send(new Discord.MessageEmbed().setDescription(`Current Server Prefix is: ${guild.Prefix}`).setColor('#0099ff'));
                 break;
             default:
                 HelpMessage(bot, guild, message, args);
@@ -48,10 +51,10 @@ function HelpMessage(bot, guild, message, args) {
     var embeddedHelpMessage = new Discord.MessageEmbed()
         .setColor('#b50909')
         .setAuthor(bot.user.username, bot.user.avatarURL())
-        .setDescription(`You can use prefix by running *${guild.prefix}prefix current* to list the current prefix, or *${guild.prefix}prefix change [new prefix]* to change the prefix.`)
+        .setDescription(`You can use prefix by running *${guild.Prefix}prefix current* to list the current prefix, or *${guild.Prefix}prefix change [new prefix]* to change the prefix.`)
         .addFields(
             { name: 'Required Permissions: ', value: 'Manage Server' },
-            { name: 'Example: ', value: `${guild.prefix}prefix current\n\n${guild.prefix}prefix change $` }
+            { name: 'Example: ', value: `${guild.Prefix}prefix current\n\n${guild.Prefix}prefix change $` }
         )
         .setTimestamp()
         .setFooter('Thanks, and have a good day');

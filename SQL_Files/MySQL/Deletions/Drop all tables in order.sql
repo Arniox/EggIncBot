@@ -1,0 +1,16 @@
+DROP TABLE members;
+DROP TABLE membersdata;
+DROP TABLE levels;
+DROP TABLE levelrestriction;
+DROP TABLE stats;
+DROP TABLE prestigedata;
+DROP TABLE lifetimeearnings;
+DROP TABLE goldeneggs;
+DROP TABLE souleggs;
+DROP TABLE earningsbonus;
+DROP TABLE numberscale;
+DROP TABLE configure;
+DROP TABLE modcontrol;
+DROP TABLE moderationlevel;
+DROP TABLE channels;
+DROP TABLE roles;

@@ -7,8 +7,8 @@
 CREATE TABLE IF NOT EXISTS `Roles`
 (
  `Role_Id`    int NOT NULL AUTO_INCREMENT ,
- `Guild_Id`   bigint NOT NULL ,
- `UUID`       bigint NOT NULL ,
+ `Guild_Id`   varchar(20) NOT NULL ,
+ `UUID`       varchar(20) NOT NULL ,
  `Role_Color` varchar(6) NULL ,
 
 PRIMARY KEY (`Role_Id`)

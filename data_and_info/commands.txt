@@ -1,0 +1,16 @@
+e-mod level set [none/light/medium/heavy/restrictive]
+e-mod level current
+
+e-mod maxdiff set [number]
+e-mod maxdiff current
+
+e-mod trustrole set [role]
+e-mod trustrole current
+
+e-mod modchat set [text channel]
+e-mod modchat current
+
+e-mod modrole set [role]
+e-mod modrole current
+
+e-mod current

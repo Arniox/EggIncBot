@@ -7,8 +7,8 @@
 CREATE TABLE IF NOT EXISTS `Members`
 (
  `Members_Id`  int NOT NULL AUTO_INCREMENT ,
- `Guild_Id`    bigint NOT NULL ,
- `UUID`        bigint NOT NULL ,
+ `bigint`      varchar(20) NOT NULL ,
+ `UUID`        varchar(20) NOT NULL ,
  `Name`        varchar(32) NOT NULL ,
  `Nick_Name`   varchar(32) NULL ,
  `Member_Data` int NOT NULL ,

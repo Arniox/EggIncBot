@@ -1,0 +1,7 @@
+INSERT INTO ModerationLevel (ModLevel_Id, Name, Description)
+VALUES
+	(0,"None","Anyone can update their stats in a specified channel. Default mode. Use this if you fully trust your community."),
+	(1,"Light","Auto moderation by the bot. The bot will check your stats history and see if there's an unusually high jump in stats. This moderation level requires you specifiy a max difference value. Use this if you somewhat trust your community."),
+	(2,"Medium","Members with a specified trusted role can update their stats freely, but everyone else needs manual moderation approval in a specified moderation approval chat. Requires a trusted role and approval chat to be set. Use this if you have a large community with only a select few trusted members."),
+	(3,"Heavy","All members need moderation approval for their stat updates. Stat updates are sent to a specified moderation approval chat. Requires an approval chat to be set. Use this if you have a large community and no trusted members."),
+	(4,"Restrictive","Only allow manual moderation approved stat updates. The bot will not process any data, and will directly send the stat screenshot to a specified moderation approval chat. Moderators then have to manually update the member's stats. Requires a moderator role and moderation approval chat to be set.")

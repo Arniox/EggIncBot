@@ -5,14 +5,17 @@ module.exports = (bot, message) => {
     //Ignore all bots
     if (message.author.bot) return;
 
-    const sql_cmd = `SELECT * FROM configure WHERE Guild_Id = ${message.guild.id}`
+    const sql_cmd = `
+    SELECT * 
+        FROM configure
+        WHERE Guild_Id = ${message.guild.id}`;
     bot.con.query(sql_cmd, (error, results, fields) => {
-        if (error || !results || !results.length) return console.error(err); //Return error console log and continue
+        if (error || !results || !results.length) return console.error(error); //Return error console log and continue
 
         //If else on messages that start with prefix
-        if (message.content.startsWith(results[0].prefix)) {
+        if (message.content.startsWith(results[0].Prefix)) {
             //Argument/command name definition.
-            var args = message.content.substring(results[0].prefix.length).split(' ');
+            var args = message.content.substring(results[0].Prefix.length).split(' ');
             var command = args.shift().toLowerCase();
 
             //Get the command data from client.commands Enmap

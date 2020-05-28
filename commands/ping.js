@@ -9,7 +9,11 @@ exports.run = (bot, guild, message, args) => {
 
     var pingMessage = new Discord.MessageEmbed()
         .setColor('#0099ff')
-        .setAuthor(bot.user.username, bot.user.avatarURL())
+        .setAuthor(
+            bot.user.username,
+            bot.user.avatarURL(),
+            `https://discordapp.com/oauth2/authorize?&client_id=${bot.user.id}&scope=bot&permissions=${permissionBitField}`
+        )
         .setDescription(`Right back at you! Yes, I am alive.`)
         .addFields(
             { name: 'Current Uptime: ', value: `${UpTime()}`, inline: true },
@@ -19,7 +23,7 @@ exports.run = (bot, guild, message, args) => {
             { name: 'Total Users: ', value: `${bot.users.cache.size}`, inline: true },
             {
                 name: 'Invite Me To Your Own Server: ',
-                value: `https://discordapp.com/oauth2/authorize?&client_id=${bot.user.id}&scope=bot&permissions=${permissionBitField}`
+                value: 'Click on the title to invite me.'
             }
         )
         .setTimestamp()
