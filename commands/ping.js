@@ -17,7 +17,7 @@ exports.run = (bot, guild, message, args) => {
         .setDescription(`Right back at you! Yes, I am alive.`)
         .addFields(
             { name: 'Current Uptime: ', value: `${UpTime()}`, inline: true },
-            { name: 'Server Prefix: ', value: `${guild.prefix}` },
+            { name: 'Server Prefix: ', value: `${guild.Prefix}` },
             { name: 'Total Guilds: ', value: `${bot.guilds.cache.size}`, inline: true },
             { name: 'Total Channels: ', value: `${bot.channels.cache.size}`, inline: true },
             { name: 'Total Users: ', value: `${bot.users.cache.size}`, inline: true },
