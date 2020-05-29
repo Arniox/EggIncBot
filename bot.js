@@ -17,6 +17,10 @@ const pool = mysql.createPool({
 
 //Initialise Discord bot
 var bot = new Discord.Client();
+//✔️
+//❌
+//🔵
+//⚠️
 
 pool.then((p) => {
     return p.getConnection();

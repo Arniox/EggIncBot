@@ -1,5 +1,9 @@
 //Import classes
 const Discord = require('discord.js');
+//✔️
+//❌
+//🔵
+//⚠️
 
 exports.run = (bot, guild, message, args) => {
     const permissionBitField = 335801409;
@@ -14,7 +18,7 @@ exports.run = (bot, guild, message, args) => {
             bot.user.avatarURL(),
             `https://discordapp.com/oauth2/authorize?&client_id=${bot.user.id}&scope=bot&permissions=${permissionBitField}`
         )
-        .setDescription(`Right back at you! Yes, I am alive.`)
+        .setDescription(`🔵 Right back at you! Yes, I am alive.`)
         .addFields(
             { name: 'Current Uptime: ', value: `${UpTime()}`, inline: true },
             { name: 'Server Prefix: ', value: `${guild.Prefix}` },

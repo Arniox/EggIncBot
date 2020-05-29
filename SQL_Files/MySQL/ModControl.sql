@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `ModControl`
 (
  `Mod_Id`                int NOT NULL AUTO_INCREMENT ,
  `ModLevel_Id`           int NOT NULL ,
- `Stats_Update_Max_Diff` bigint NULL ,
+ `Stats_Update_Max_Diff` float NULL ,
  `Stats_Trusted_Role`    int NULL ,
  `Mod_Approval_Chat`     int NULL ,
  `Moderator_Role`        int NULL ,
