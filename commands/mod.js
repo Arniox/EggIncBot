@@ -24,7 +24,10 @@ exports.run = (bot, guild, message, args) => {
                 ModChat.Guild_Id AS 'ModChatGuildId',
                 ModRole.Role_Id AS 'ModRole_RoleId',
                 ModRole.UUID AS 'ModRoleId',
-                ModRole.Guild_Id AS 'ModRoleGuildId'
+                ModRole.Guild_Id AS 'ModRoleGuildId',
+                PostingChat.Channel_Id AS 'PostChat_ChannelId',
+                PostingChat.UUID AS 'PostChatId',
+                PostingChat.Guild_Id AS 'PostChatGuildId',
                     FROM configure AS Config
                     INNER JOIN ModControl AS ModControl
                         ON Config.Mod_Id = ModControl.Mod_Id
@@ -36,6 +39,8 @@ exports.run = (bot, guild, message, args) => {
                         ON ModControl.Mod_Approval_Chat = ModChat.Channel_Id
                     LEFT JOIN Roles AS ModRole
                         ON ModControl.Moderator_Role = ModRole.Role_Id
+                    LEFT JOIN Channels AS PostingChat
+                        ON ModControl.Stats_Post_Channel = PostingChat.Channel_Id
                     WHERE Config.Guild_Id = ${message.guild.id}
                 `;
         bot.con.query(current_settings_cmd, (error, results, fields) => {
@@ -44,12 +49,87 @@ exports.run = (bot, guild, message, args) => {
             if (message.member.hasPermission('MANAGE_GUILD') || message.member.roles.cache.some(role => results[0].ModRoleId)) {
                 if ((results[0].TrustRoleGuildId == message.guild.id || results[0].TrustRoleId == null) &&
                     (results[0].ModChatGuildId == message.guild.id || results[0].ModChatId == null) &&
-                    (results[0].ModRoleGuildId == message.guild.id || results[0].ModRoleId == null)) {
-
-                    console.log(results);
+                    (results[0].ModRoleGuildId == message.guild.id || results[0].ModRoleId == null) &&
+                    (results[0].PostChatGuildId == message.guild.id || results[0].PostChatId == null)) {
 
                     //Check the option you want
                     switch (command) {
+                        case 'postchat':
+                            if (args.length != 0) {
+                                var dictation = args.shift().toLowerCase();
+
+                                switch (dictation) {
+                                    case 'set':
+                                        var channels = message.mentions.channels;
+                                        if (channels.size != 0) {
+                                            if (channels.size == 1) {
+                                                //Save channel id
+                                                channels.map((value, key) => {
+                                                    //Check that the channel isn't already the posting chat
+                                                    if (results[0].PostChatId != key) {
+                                                        //If postchat id is null, then create a new post chat
+                                                        var update_postchat_cmd = '';
+                                                        if (results[0].PostChat_ChannelId == null) {
+                                                            update_postchat_cmd = `INSERT INTO channels (Guild_Id, UUID, Channel_Name) VALUES ("${message.guild.id}", "${key}", "${value.name}")`;
+                                                        } else {
+                                                            //Update database
+                                                            update_postchat_cmd = `UPDATE channels SET UUID = "${key}", channel_name = "${value.name}" WHERE channel_id = ${results[0].PostChat_ChannelId}`;
+                                                        }
+                                                        //Run command
+                                                        bot.con.query(update_postchat_cmd, (error, channelresults, fields) => {
+                                                            if (error) return console.error(error); //Throw error and continue
+
+                                                            //If PostChat_ChannelId is null, then insert into ModControl
+                                                            if (results[0].PostChat_ChannelId == null) {
+                                                                const set_postchat_cmd = `UPDATE modcontrol SET mod_approval_chat = ${channelresults.insertId} WHERE Mod_Id = ${results[0].ModControl_Id}`;
+                                                                bot.con.query(set_postchat_cmd).catch(error => console.error(error)); //Update the mod controller with new id
+                                                            }
+                                                            //Message
+                                                            message.channel.send(new Discord.MessageEmbed().setDescription(`✅ Set ${message.guild.channels.cache.get(key).toString()}` +
+                                                                ` as the egg inc stat posting channel.`).setColor('#09b50c'));
+                                                        });
+                                                    } else {
+                                                        message.channel.send(new Discord.MessageEmbed().setDescription(`❌ ${message.guild.channels.cache.get(results[0].PostChatId).toString()}` +
+                                                            ` is already set as the stat posting chat for ${message.guild.toString()}`).setColor('#b50909'));
+                                                    }
+                                                });
+                                            } else {
+                                                message.channel.send(new Discord.MessageEmbed().setDescription('❌ There can only be one specified moderation approval chat.').setColor('#b50909'));
+                                            }
+                                        } else {
+                                            message.channel.send(new Discord.MessageEmbed().setDescription('❌ You didn\'t supply any channel to set.').setColor('#b50909'));
+                                        }
+                                        break;
+                                    case 'clear':
+                                        //If post chat id is null, then don't do anything
+                                        if (results[0].PostChat_ChannelId != null) {
+                                            //Set modcontrol stats_post_channel id to null
+                                            const remove_id_cmd = `UPDATE modcontrol SET stats_post_channel = null WHERE Mod_Id = ${results[0].ModControl_Id}`;
+                                            bot.con.query(remove_id_cmd).catch(error => console.error(error)); //Throw error and continue
+
+                                            //Delete posting chat
+                                            const delete_postchat_cmd = `DELETE FROM channels WHERE channel_id = ${results[0].PostChat_ChannelId}`;
+                                            bot.con.query(delete_postchat_cmd).catch(error => console.error(error));
+
+                                            //Message
+                                            message.channel.send(new Discord.MessageEmbed().setDescription(`✅ Removed ${message.guld.channels.cache.get(results[0].PostChatId)}` +
+                                                ` as the stat posting chat.`).setColor('#09b50c'));
+                                        } else {
+                                            message.channel.send(new Discord.MessageEmbed().setDescription('❌ There was no moderation approval chat to clear.').setColor('#b50909'));
+                                        }
+                                        break;
+                                    case 'current':
+                                        message.channel.send(new Discord.MessageEmbed().setDescription(`🔵 The current listed stat posting chat is ` +
+                                            `${(results[0].PostChatId != null ? `${message.guild.channels.cache.get(results[0].PostChatId).toString()}` : '***No Stat Posting Chat Set***')}`));
+                                        break;
+                                    default:
+                                        HelpMessage(bot, guild, message, args);
+                                        break;
+                                }
+                            } else {
+                                HelpMessage(bot, guild, message, args);
+                            }
+                            break;
                         case 'level':
                             if (args.length != 0) {
                                 var dictation = args.shift().toLowerCase();
@@ -341,7 +421,7 @@ exports.run = (bot, guild, message, args) => {
                                                 bot.con.query(delete_modchat_cmd).catch(error => console.error(error));
 
                                                 //Message
-                                                message.channel.send(new Discord.MessageEmbed().setDescription(`✅ Removed ${message.guild.roles.cache.get(results[0].ModChatId)}` +
+                                                message.channel.send(new Discord.MessageEmbed().setDescription(`✅ Removed ${message.guild.channels.cache.get(results[0].ModChatId)}` +
                                                     ` as a moderation approval chat.`).setColor('#09b50c'));
                                             } else {
                                                 message.channel.send(new Discord.MessageEmbed().setDescription(`❌ ${results[0].ModLevelName} moderation *requires* a moderation approval chat to be set.` +
