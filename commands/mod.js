@@ -27,7 +27,7 @@ exports.run = (bot, guild, message, args) => {
                 ModRole.Guild_Id AS 'ModRoleGuildId',
                 PostingChat.Channel_Id AS 'PostChat_ChannelId',
                 PostingChat.UUID AS 'PostChatId',
-                PostingChat.Guild_Id AS 'PostChatGuildId',
+                PostingChat.Guild_Id AS 'PostChatGuildId'
                     FROM configure AS Config
                     INNER JOIN ModControl AS ModControl
                         ON Config.Mod_Id = ModControl.Mod_Id
@@ -81,7 +81,7 @@ exports.run = (bot, guild, message, args) => {
 
                                                             //If PostChat_ChannelId is null, then insert into ModControl
                                                             if (results[0].PostChat_ChannelId == null) {
-                                                                const set_postchat_cmd = `UPDATE modcontrol SET mod_approval_chat = ${channelresults.insertId} WHERE Mod_Id = ${results[0].ModControl_Id}`;
+                                                                const set_postchat_cmd = `UPDATE modcontrol SET stats_post_channel = ${channelresults.insertId} WHERE Mod_Id = ${results[0].ModControl_Id}`;
                                                                 bot.con.query(set_postchat_cmd).catch(error => console.error(error)); //Update the mod controller with new id
                                                             }
                                                             //Message
@@ -115,7 +115,7 @@ exports.run = (bot, guild, message, args) => {
                                             message.channel.send(new Discord.MessageEmbed().setDescription(`✅ Removed ${message.guld.channels.cache.get(results[0].PostChatId)}` +
                                                 ` as the stat posting chat.`).setColor('#09b50c'));
                                         } else {
-                                            message.channel.send(new Discord.MessageEmbed().setDescription('❌ There was no moderation approval chat to clear.').setColor('#b50909'));
+                                            message.channel.send(new Discord.MessageEmbed().setDescription('❌ There was no stat posting channel to clear.').setColor('#b50909'));
                                         }
                                         break;
                                     case 'current':
@@ -561,6 +561,10 @@ exports.run = (bot, guild, message, args) => {
                                         name: 'Moderation Approval Chat: ',
                                         value: `${(results[0].ModChatId != null ? `${message.guild.channels.cache.get(results[0].ModChatId).toString()}` : '***No Moderation Approval Chat Set***')}`,
                                         inline: true
+                                    },
+                                    {
+                                        name: 'Stats Rank Change Chat: ',
+                                        value: `${(results[0].PostChatId != null ? `${message.guild.channels.cache.get(results[0].PostChatId).toString()}` : "***No Stats Rank Change Chat Set***")}`
                                     }
                                 )
                                 .setTimestamp()
@@ -621,10 +625,11 @@ function HelpMessage(bot, guild, message, args) {
                 name: 'Command Format: ',
                 value: `${guild.Prefix}mod [variable/function] [current/set/clear] [value]\n` +
                     `${guild.Prefix}mod level [current/set/clear] {optional set: [none/light/medium/heavy/restrictive]}\n` +
-                    `${guild.Prefix}mod maxdiff [current/setclear] {optional set: [number representing percentage, eg: 75]}\n` +
-                    `${guild.Prefix}mod trustrole [current/setclear] {optional set: [@role]}\n` +
-                    `${guild.Prefix}mod modchat [current/setclear] {optional set: [#chat]}\n` +
-                    `${guild.Prefix}mod modrole [current/setclear] {optional set: [@role]}\n` +
+                    `${guild.Prefix}mod maxdiff [current/set/clear] {optional set: [percentage, eg: 75]}\n` +
+                    `${guild.Prefix}mod trustrole [current/set/clear] {optional set: [@role]}\n` +
+                    `${guild.Prefix}mod modchat [current/set/clear] {optional set: [#chat]}\n` +
+                    `${guild.Prefix}mod modrole [current/set/clear] {optional set: [@role]}\n` +
+                    `${guild.Prefix}mod postchat [current/set/clear] {optional set: [#chat]}\n` +
                     `${guild.Prefix}mod current - (shows all current settings)`
             }
         )
