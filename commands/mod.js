@@ -28,7 +28,7 @@ exports.run = (bot, guild, message, args) => {
                 PostingChat.Channel_Id AS 'PostChat_ChannelId',
                 PostingChat.UUID AS 'PostChatId',
                 PostingChat.Guild_Id AS 'PostChatGuildId'
-                    FROM configure AS Config
+                    FROM Configure AS Config
                     INNER JOIN ModControl AS ModControl
                         ON Config.Mod_Id = ModControl.Mod_Id
                     INNER JOIN ModerationLevel AS ModLevel
@@ -41,16 +41,16 @@ exports.run = (bot, guild, message, args) => {
                         ON ModControl.Moderator_Role = ModRole.Role_Id
                     LEFT JOIN Channels AS PostingChat
                         ON ModControl.Stats_Post_Channel = PostingChat.Channel_Id
-                    WHERE Config.Guild_Id = ${message.guild.id}
-                `;
+                    WHERE Config.Guild_Id = ${message.guild.id}`;
+
         bot.con.query(current_settings_cmd, (error, results, fields) => {
             if (error) return console.error(error); //Throw error and continue
 
-            if (message.member.hasPermission('MANAGE_GUILD') || message.member.roles.cache.some(role => results[0].ModRoleId)) {
-                if ((results[0].TrustRoleGuildId == message.guild.id || results[0].TrustRoleId == null) &&
-                    (results[0].ModChatGuildId == message.guild.id || results[0].ModChatId == null) &&
-                    (results[0].ModRoleGuildId == message.guild.id || results[0].ModRoleId == null) &&
-                    (results[0].PostChatGuildId == message.guild.id || results[0].PostChatId == null)) {
+            if ((results[0].TrustRoleGuildId == message.guild.id || results[0].TrustRoleId == null) &&
+                (results[0].ModChatGuildId == message.guild.id || results[0].ModChatId == null) &&
+                (results[0].ModRoleGuildId == message.guild.id || results[0].ModRoleId == null) &&
+                (results[0].PostChatGuildId == message.guild.id || results[0].PostChatId == null)) {
+                if (message.member.hasPermission('MANAGE_GUILD') || message.member.roles.cache.some(role => results[0].ModRoleId)) {
 
                     //Check the option you want
                     switch (command) {
@@ -120,7 +120,7 @@ exports.run = (bot, guild, message, args) => {
                                         break;
                                     case 'current':
                                         message.channel.send(new Discord.MessageEmbed().setDescription(`🔵 The current listed stat posting chat is ` +
-                                            `${(results[0].PostChatId != null ? `${message.guild.channels.cache.get(results[0].PostChatId).toString()}` : '***No Stat Posting Chat Set***')}`));
+                                            `${(results[0].PostChatId != null ? `${message.guild.channels.cache.get(results[0].PostChatId).toString()}` : '***No Stat Posting Chat Set***')}`).setColor('#0099ff'));
                                         break;
                                     default:
                                         HelpMessage(bot, guild, message, args);
@@ -578,10 +578,10 @@ exports.run = (bot, guild, message, args) => {
                             break;
                     }
                 } else {
-                    console.error('ERROR - For some reason the database selection returned values that did not share the same Guild.');
+                    message.channel.send(new Discord.MessageEmbed().setDescription('❌ Sorry, you need management permissions, or need to be a moderator to run this command.').setColor('#b50909'));
                 }
             } else {
-                message.channel.send(new Discord.MessageEmbed().setDescription('❌ Sorry, you need management permissions, or need to be a moderator to run this command.').setColor('#b50909'));
+                console.error('ERROR - For some reason the database selection returned values that did not share the same Guild.');
             }
         });
     } else {

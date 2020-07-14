@@ -1,3 +1,4 @@
+//Modding
 e-mod level set [none/light/medium/heavy/restrictive]
 e-mod level current
 
@@ -18,3 +19,26 @@ e-mod modrole clear
 e-mod modrole current
 
 e-mod current
+
+//Contract counting
+e-start [contract] [option] [@role] [@member]
+
+e-start contract prefarm
+e-start contract prefarm [contract code]
+e-start contract prefarm [contract code] [@role]
+e-start contract prefarm [contract code] [@role] [@member]
+
+e-start contract add role [@role] [contract id]
+e-start contract remove role [contract id]
+
+e-start contract add member [@member] [contract id]
+e-start contract remove member [contract id]
+
+e-start contract addcode [code] [contract id]
+e-start contract removecode [contract id]
+
+
+
+
+
+
